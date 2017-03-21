@@ -29,6 +29,7 @@
     var score = 0;
     var txtScore;
     var eventScore;
+    var keyRestart;
 
     function preload() {
         // 게임에 필요한 데이터 로드
@@ -74,11 +75,12 @@
         ddong = game.add.group();
         ddong.enableBody = true;
         ddong.physicsBodyType = Phaser.Physics.ARCADE;
-        ddong.createMultiple(30, "ddong");
+        ddong.createMultiple(20, "ddong");
         ddong.setAll("outOfBoundsKill", true);
         ddong.setAll("checkWorldBounds", true);
 
         keyMove = game.input.keyboard.createCursorKeys(); // 키보드 커서키 입력 이벤트 생성
+        keyRestart = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
         txtGameover = game.add.text(game.world.centerX, game.world.centerY, "Game Over", {
             font: "70px Arial",
@@ -87,12 +89,13 @@
         txtGameover.anchor.setTo(0.5, 0.5);
         txtGameover.visible = false;
 
-        txtRestart = game.add.text(game.world.centerX, game.world.centerY+60, "재시작 하시겠습니까? (Y/N)", {
+        txtRestart = game.add.text(game.world.centerX, game.world.centerY + 60, "클릭 또는 '스페이스바'를 누르세요.", {
             font: "30px Arial",
             fill: "#FFFFFF"
         });
         txtRestart.anchor.setTo(0.5, 0.5);
         txtRestart.visible = false;
+        txtRestart.inputEnabled = true;
 
         txtScore = game.add.text(20, 10, "Score : 0", {
             font: "50px Arial",
@@ -114,6 +117,14 @@
         player.body.velocity.setTo(0, 0); // 관성을 0으로 설정
 
         if (playerLife < 1) {
+            if (txtRestart.input.pointerOver()) {
+                txtRestart.addColor("#FFFF00", 0);
+            } else if (keyRestart.isDown) {
+                location.reload();
+            } else {
+                txtRestart.addColor("#FFFFFF", 0);
+            }
+
             return;
         }
 
@@ -183,7 +194,14 @@
         playerLife--;
         txtGameover.visible = true;
         txtRestart.visible = true;
+        //location.reload();
+
+        txtRestart.events.onInputDown.add(start, this);
         game.time.events.remove(eventScore);
+    }
+
+    function start() {
+        location.reload();
     }
     </script>
 </body>
