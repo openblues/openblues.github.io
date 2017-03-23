@@ -16,6 +16,9 @@
         update: update
     });
 
+    //game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO);
+
+
     var box;
     var player;
     var keyMove;
@@ -106,6 +109,11 @@
             txtScore.setText("Score : " + score);
         }, this);
 
+        player.inputEnabled = true;
+        player.input.enableDrag();
+        player.events.onDragStart.add(onDragStart, this);
+        player.events.onDragStop.add(onDragStop, this);
+
     }
 
     function update() {
@@ -127,6 +135,11 @@
 
             return;
         }
+
+        /*if (game.input.mousePointer.isDown) {
+            player.body.x= game.input.mousePointer.x;
+            player.body.y = game.input.mousePointer.y;
+        }*/
 
         if (keyMove.left.isDown && keyMove.up.isDown) {
             player.body.velocity.x = -150;
@@ -195,6 +208,7 @@
         txtGameover.visible = true;
         txtRestart.visible = true;
         //location.reload();
+        player.inputEnabled = false;
 
         txtRestart.events.onInputDown.add(start, this);
         game.time.events.remove(eventScore);
